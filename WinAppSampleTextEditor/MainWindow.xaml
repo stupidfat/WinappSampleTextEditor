@@ -1,0 +1,52 @@
+<Window
+    x:Class="WinAppSampleTextEditor.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:WinAppSampleTextEditor"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="Sample Text Editor"
+    mc:Ignorable="d">
+
+    <Grid RowDefinitions="Auto,* ,Auto">
+        <CommandBar DefaultLabelPosition="Right">
+            <AppBarButton Click="NewFile_Click" Icon="Page2" Label="New" />
+            <AppBarButton Click="OpenFile_Click" Icon="OpenFile" Label="Open" />
+            <AppBarButton Click="SaveFile_Click" Icon="Save" Label="Save" />
+            <AppBarButton Click="SaveAsFile_Click" Icon="SaveLocal" Label="Save As" />
+            <AppBarSeparator />
+            <ToggleButton x:Name="WordWrapToggle"
+                          Checked="WordWrapToggle_Changed"
+                          Content="Word Wrap"
+                          IsChecked="True"
+                          Unchecked="WordWrapToggle_Changed" />
+        </CommandBar>
+
+        <TextBox x:Name="Editor"
+                 Grid.Row="1"
+                 AcceptsReturn="True"
+                 AcceptsTab="True"
+                 FontFamily="Consolas"
+                 FontSize="14"
+                 HorizontalAlignment="Stretch"
+                 PlaceholderText="Start typing here..."
+                 ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                 ScrollViewer.VerticalScrollBarVisibility="Auto"
+                 SelectionChanged="Editor_SelectionChanged"
+                 TextChanged="Editor_TextChanged"
+                 TextWrapping="Wrap"
+                 VerticalAlignment="Stretch" />
+
+        <Grid Grid.Row="2"
+              Padding="12,8"
+              Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <TextBlock x:Name="DocumentStateText" />
+            <TextBlock x:Name="CursorStateText" Grid.Column="1" />
+        </Grid>
+    </Grid>
+</Window>
