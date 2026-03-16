@@ -1,4 +1,3 @@
-using System.Text;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Windows.Storage;
@@ -19,6 +18,39 @@ public sealed partial class MainWindow : Window
         UpdateWordWrap();
         UpdateWindowTitle();
         UpdateStatus();
+    }
+
+    public async Task OpenFileFromPathAsync(string filePath)
+    {
+        if (string.IsNullOrWhiteSpace(filePath) || !File.Exists(filePath))
+        {
+            await ShowErrorAsync("The selected file could not be found.");
+            return;
+        }
+
+        if (!await ConfirmLoseUnsavedChangesAsync())
+        {
+            return;
+        }
+
+        try
+        {
+            var file = await StorageFile.GetFileFromPathAsync(filePath);
+
+            _suppressDirtyTracking = true;
+            Editor.Text = await FileIO.ReadTextAsync(file, Windows.Storage.Streams.UnicodeEncoding.Utf8);
+            _suppressDirtyTracking = false;
+
+            _currentFilePath = file.Path;
+            _hasUnsavedChanges = false;
+            UpdateWindowTitle();
+            UpdateStatus();
+        }
+        catch (Exception ex)
+        {
+            _suppressDirtyTracking = false;
+            await ShowErrorAsync($"Unable to open file.{Environment.NewLine}{ex.Message}");
+        }
     }
 
     private async void NewFile_Click(object sender, RoutedEventArgs e)
@@ -58,14 +90,7 @@ public sealed partial class MainWindow : Window
             return;
         }
 
-        _suppressDirtyTracking = true;
-        Editor.Text = await FileIO.ReadTextAsync(file, Windows.Storage.Streams.UnicodeEncoding.Utf8);
-        _suppressDirtyTracking = false;
-
-        _currentFilePath = file.Path;
-        _hasUnsavedChanges = false;
-        UpdateWindowTitle();
-        UpdateStatus();
+        await OpenFileFromPathAsync(file.Path);
     }
 
     private async void SaveFile_Click(object sender, RoutedEventArgs e)
@@ -151,6 +176,19 @@ public sealed partial class MainWindow : Window
         };
 
         return await dialog.ShowAsync() == ContentDialogResult.Primary;
+    }
+
+    private async Task ShowErrorAsync(string message)
+    {
+        var dialog = new ContentDialog
+        {
+            Title = "Open failed",
+            Content = message,
+            CloseButtonText = "OK",
+            XamlRoot = Content.XamlRoot
+        };
+
+        await dialog.ShowAsync();
     }
 
     private void UpdateWordWrap()

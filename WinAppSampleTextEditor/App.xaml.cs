@@ -4,7 +4,7 @@ namespace WinAppSampleTextEditor;
 
 public partial class App : Application
 {
-    private Window? _window;
+    private MainWindow? _window;
 
     public App()
     {
@@ -15,5 +15,14 @@ public partial class App : Application
     {
         _window = new MainWindow();
         _window.Activate();
+
+        var launchFilePath = Environment.GetCommandLineArgs()
+            .Skip(1)
+            .FirstOrDefault(static path => File.Exists(path));
+
+        if (!string.IsNullOrWhiteSpace(launchFilePath))
+        {
+            _ = _window.OpenFileFromPathAsync(launchFilePath);
+        }
     }
 }
