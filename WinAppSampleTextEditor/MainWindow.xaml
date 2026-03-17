@@ -15,11 +15,12 @@
             <AppBarButton Click="SaveFile_Click" Icon="Save" Label="Save" />
             <AppBarButton Click="SaveAsFile_Click" Icon="SaveLocal" Label="Save As" />
             <AppBarSeparator />
-            <ToggleButton x:Name="WordWrapToggle"
-                          Checked="WordWrapToggle_Changed"
-                          Content="Word Wrap"
-                          IsChecked="True"
-                          Unchecked="WordWrapToggle_Changed" />
+            <AppBarToggleButton x:Name="WordWrapToggle"
+                                Checked="WordWrapToggle_Changed"
+                                Icon="AlignJustify"
+                                IsChecked="True"
+                                Label="Word Wrap"
+                                Unchecked="WordWrapToggle_Changed" />
         </CommandBar>
 
         <TextBox x:Name="Editor"
